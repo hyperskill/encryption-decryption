@@ -8,31 +8,17 @@ public class Crypto {
         String mode = scanner.nextLine();
         String text = scanner.nextLine();
         int key = Integer.parseInt(scanner.nextLine());
-        String alph = "abcdefghijklmnopqrstuvwxyz";
-        String enctext = "";
-        switch (mode) {
-            case "enc":
-                for (char c : text.toLowerCase().toCharArray()) {
-                    int i = alph.indexOf(c);
-                    if (i != -1) {
-                        enctext += alph.charAt(i + key < alph.length() ? i + key : i + key - alph.length());
-                    } else {
-                        enctext += c;
-                    }
-                }
-                break;
-            case "dec":
-                for (char c : text.toLowerCase().toCharArray()) {
-                    int i = alph.indexOf(c);
-                    if (i != -1) {
-                        enctext += alph.charAt(i - key > 0 ? i - key : i - key + alph.length());
-                    } else {
-                        enctext += c;
-                    }
-                }
-                break;
-        }
-        System.out.println(enctext);
-
+        System.out.println(encode(mode, text, key));
     }
+
+    private static String encode(String mode, String text, int key)
+    {
+        String enctext = "";
+        for (char c : text.toCharArray()) {
+            enctext += (char)((int)c+ (mode.equals("enc")?5:mode.equals("dec")?-5:0));
+        }
+        return enctext;
+    }
+
+
 }

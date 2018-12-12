@@ -2,6 +2,9 @@ package crypto;
 
 import java.util.Scanner;
 
+import translater.Translater;
+import translater.TranslaterFactory;
+
 public class Crypto {
     public static void main(String[] args) {
     	Scanner scanner = new Scanner(System.in);

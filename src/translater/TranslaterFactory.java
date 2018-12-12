@@ -1,4 +1,4 @@
-package crypto;
+package translater;
 
 public class TranslaterFactory {
 	public static Translater getTranslater(String cmd, String message, int key) {

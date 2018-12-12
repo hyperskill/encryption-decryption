@@ -1,4 +1,4 @@
-package crypto;
+package translater;
 
 public class Encrypter extends Translater {
 	public Encrypter(String message, int key) {

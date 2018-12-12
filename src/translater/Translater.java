@@ -1,4 +1,4 @@
-package crypto;
+package translater;
 
 public abstract class Translater {
 	public String message;

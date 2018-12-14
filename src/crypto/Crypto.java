@@ -6,10 +6,22 @@ public class Crypto {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
-        String target = scanner.nextLine();
-//        String message = "Wabc";
-        String message = scanner.nextLine();
-        int offset = scanner.nextInt();
+        String target;
+        if(args.length > 1 && args[0].equals("-mode")){
+            target = args[1];
+        } else{
+            target = "enc";
+        }
+
+        String message;
+        int offset;
+        if(args.length == 6 && args[4].equals("-data")){
+            message = args[5];
+            offset= Integer.parseInt(args[3]);
+        } else{
+            message = scanner.nextLine();
+            offset = scanner.nextInt();
+        }
 
         if(target.equals("enc")){
             System.out.println(enc(message, offset));

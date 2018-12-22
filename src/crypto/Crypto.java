@@ -3,6 +3,7 @@ package crypto;
 import crypto.algorithms.CaesarAlgorithm;
 import crypto.algorithms.CryptoAlgorithm;
 import crypto.algorithms.MorseAlgorithm;
+import crypto.algorithms.VigenereAlgorithm;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -112,6 +113,9 @@ public class Crypto {
                 break;
             case "morse":
                 this.algorithm = new MorseAlgorithm();
+                break;
+            case "vigenere":
+                this.algorithm = new VigenereAlgorithm();
                 break;
             default:
                 this.algorithm = new CaesarAlgorithm();

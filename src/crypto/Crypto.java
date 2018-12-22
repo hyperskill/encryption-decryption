@@ -1,5 +1,10 @@
 package crypto;
 
+import crypto.algorithms.CaesarAlgorithm;
+import crypto.algorithms.CryptoAlgorithm;
+import crypto.algorithms.MorseAlgorithm;
+import crypto.algorithms.VigenereAlgorithm;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -12,42 +17,51 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Crypto {
+    private CryptoAlgorithm algorithm;
+    private  static List<String> argsList;
     public static void main(String[] args) {
         final String MODE = "-mode";
         final String KEY= "-key";
         final String DATA= "-data";
         final String IN = "-in";
         final String OUT = "-out";
+        final String ALG = "-alg";
 
         Scanner scanner = new Scanner(System.in);
 
-        String target;
+        String target = "enc";
         String message = null;
         String processed = null;
-        int offset;
+        String chiperKey;
+        String alg  = "caesar";
         int index = -1;
-        List argsList = Arrays.asList(args);
+        String value;
+        argsList = Arrays.asList(args);
+
+        /*Algorithm*/
+        value = findArgValue(ALG);
+        alg = (value != null) ? value: alg;
+        final Crypto app = new Crypto(alg);
 
         /*Mode*/
-        index = argsList.indexOf(MODE);
-        if(index != -1){
-            target = args[index+1];
-        } else{
-            target = "enc";
+        value = findArgValue(MODE);
+        if(value != null){
+            target = value;
         }
 
         /*Input*/
-        index = argsList.indexOf(IN);
-        if(index != -1){
+        value = findArgValue(IN);
+        if(value != null){
             try {
-                message = new String(Files.readAllBytes(Paths.get(args[index + 1])));
+                message = readFromFile(value);
             } catch (IOException e) {
-                System.out.println("Not found file " + args[index + 1]);
+                e.printStackTrace();
+                System.exit(0);
             }
         } else{
-            index = argsList.indexOf(DATA);
-            if(index != -1 && message != null){
-                message = args[index + 1];
+            value = findArgValue(DATA);
+            if(value != null){
+                message = value;
             } else{
                 System.out.println("Enter data:");
                 message = scanner.nextLine();
@@ -55,58 +69,82 @@ public class Crypto {
         }
 
         /*Key*/
-        index = argsList.indexOf(KEY);
-        if(index != -1){
-            offset = Integer.parseInt(args[index+1]);
+        value = findArgValue(KEY);
+        if(value != null){
+            chiperKey = value;
         } else{
             System.out.println("Enter key:");
-            offset = scanner.nextInt();
+            chiperKey = scanner.nextLine();
 
         }
 
-        if(target.equals("enc")){
-            processed = enc(message, offset);
-        } else if(target.equals("dec")){
-            processed = dec(message, offset);
+        /*Get message*/
+        if(target.equals("dec")){
+            processed = app.dec(message, chiperKey);
+        } else{
+            processed = app.enc(message, chiperKey);
         }
 
         /*Output*/
-        index = argsList.indexOf(OUT);
-        if(index != -1){
-            File outputFile = new File(args[index + 1]);
-            try (FileWriter writer = new FileWriter(outputFile)) {
-                writer.write(processed);
+        value = findArgValue(OUT);
+        if(value != null){
+            try {
+                writeToFile(value, processed);
             } catch (IOException e) {
-                System.out.println("Cannot write output message to file");
+                e.printStackTrace();
+                System.exit(0);
             }
         } else{
             System.out.println(processed);
         }
     }
-
-    public Crypto() {
-    }
-
-    public static String enc(String originalStr, int offset){
-        return offsetAll(originalStr, offset);
-    }
-
-    public static String dec(String originalStr, int offset){
-        return offsetAll(originalStr, -offset);
-    }
-    public static String offsetAll(String originalStr, int offset){
-        final int lettersStar = 97;
-        final int lettersAmount = 26;
-
-        StringBuilder out = new StringBuilder();
-        char[] letters = new char[originalStr.length()];
-        originalStr.getChars(0, originalStr.length(), letters, 0  );
-
-        for (int letter : letters){
-            letter = (letter + offset);
-            out.append((char)letter);
+    public static String findArgValue(String key){
+        int index = argsList.indexOf(key);
+        if(index != -1){
+            return argsList.get(index+1);
         }
-
-        return out.toString();
+        return null;
     }
+
+    public Crypto(String alg) {
+        switch (alg) {
+            case "caesar":
+                this.algorithm = new CaesarAlgorithm();
+                break;
+            case "morse":
+                this.algorithm = new MorseAlgorithm();
+                break;
+            case "vigenere":
+                this.algorithm = new VigenereAlgorithm();
+                break;
+            default:
+                this.algorithm = new CaesarAlgorithm();
+        }
+    }
+    private String enc(String data, String key){
+        return algorithm.enc(data, key);
+    }
+    private String dec(String data, String key){
+        return algorithm.dec(data, key);
+    }
+    private static String readFromFile(String filename) throws IOException {
+        try {
+            return new String(Files.readAllBytes(Paths.get(filename)));
+        } catch (IOException e) {
+            System.out.println("Not found file " + filename);
+            throw e;
+        }
+    }
+    private static void writeToFile(String filename, String data) throws IOException {
+        File outputFile = new File(filename);
+        try (FileWriter writer = new FileWriter(outputFile)) {
+            writer.write(data);
+            System.out.println("Success! Write to: " + outputFile.getName());
+        } catch (IOException e) {
+            System.out.println("Cannot write output message to file");
+            throw e;
+        }
+    }
+
+
 }

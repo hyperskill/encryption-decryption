@@ -40,6 +40,19 @@ public class Crypto {
     }
 
     public static String decryption(String message, int key) {
-        return "";
+        String encrypt = "";
+        for (int i = 0; i < message.length(); i++) {
+            int index = message.charAt(i);
+
+            if (index != -1) {
+                int newIndex = index - key;
+                char c = (char) newIndex;
+                encrypt += c;
+            } else {
+                encrypt += String.valueOf(index);;
+            }
+        }
+
+        return encrypt;
     }
 }

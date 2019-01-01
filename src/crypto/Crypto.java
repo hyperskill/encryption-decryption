@@ -7,15 +7,32 @@ import java.io.InputStreamReader;
 public class Crypto {
 
     public static void main(String[] args) {
-        String operation = "";
+        String operation = "enc";
         String message = "";
         int key = 0;
         String result;
 
-        try (BufferedReader bf = new BufferedReader(new InputStreamReader(System.in))) {
-            operation = bf.readLine();
-            message = bf.readLine();
-            key = Integer.valueOf(bf.readLine());
+        for (int i = 0; i < args.length; i++) {
+            switch (args[i]) {
+                case "-mode":
+                    operation = args[i + 1];
+                    break;
+                case "-key":
+                    key = Integer.valueOf(args[i + 1]);
+                    break;
+                case "-data":
+                    message = args[i + 1];
+                    break;
+            }
+        }
+
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in))) {
+            if (key == 0) {
+                key = Integer.valueOf(br.readLine());
+            }
+            if (message.isEmpty()) {
+                message = br.readLine();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

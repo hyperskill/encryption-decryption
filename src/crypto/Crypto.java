@@ -11,8 +11,9 @@ public class Crypto {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         String state = "enc";
+        String key = "";
+        String algName = "";
         String message = "";
-        int key = 0;
         String result = "";
         String in = "";
         String out = "";
@@ -22,7 +23,10 @@ public class Crypto {
                 state = args[i + 1];
                 i++;
             } else if ("-key".equals(args[i])) {
-                key = Integer.parseInt(args[i + 1]);
+                key = args[i + 1];
+                i++;
+            }else if ("-alg".equals(args[i])) {
+                algName = args[i + 1];
                 i++;
             } else if ("-data".equals(args[i])) {
                 message = args[i + 1];
@@ -36,9 +40,11 @@ public class Crypto {
             }
         }
 
-        if (key == 0) {
+        CryptoAlgorithm cryptoAlgorithm = CryptoAlgorithmFactory.getAlgorithm(algName);
+
+        if (key.equals("")) {
             System.out.print("Enter key: ");
-            key = scanner.nextInt();
+            key = scanner.nextLine();
         }
 
         if (!in.equals("")) {
@@ -58,11 +64,11 @@ public class Crypto {
         }
 
         if ("enc".equals(state)) {
-            result = encryption(message, key);
+            result = cryptoAlgorithm.encryption(message, key);
         }
 
         if ("dec".equals(state)) {
-            result = decryption(message, key);
+            result = cryptoAlgorithm.decryption(message, key);
         }
 
         if (out.equals("")) {
@@ -88,40 +94,5 @@ public class Crypto {
                 }
             }
         }
-
-    }
-
-    public static String encryption(String message, int key) {
-        String encrypt = "";
-        for (int i = 0; i < message.length(); i++) {
-            int index = message.charAt(i);
-
-            if (index != -1) {
-                int newIndex = index + key;
-                char c = (char) newIndex;
-                encrypt += c;
-            } else {
-                encrypt += String.valueOf(index);;
-            }
-        }
-
-        return encrypt;
-    }
-
-    public static String decryption(String message, int key) {
-        String encrypt = "";
-        for (int i = 0; i < message.length(); i++) {
-            int index = message.charAt(i);
-
-            if (index != -1) {
-                int newIndex = index - key;
-                char c = (char) newIndex;
-                encrypt += c;
-            } else {
-                encrypt += String.valueOf(index);;
-            }
-        }
-
-        return encrypt;
     }
 }

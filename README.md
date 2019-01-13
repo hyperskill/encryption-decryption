@@ -2,4 +2,10 @@
 
 Project: Encryption-Decryption
 
-Go to the *src* directory, change *Crypto.java* and put your *.java* file(s) in it.
+Added two methods for encryption/description
+
+Command line support added 
+
+Work with files added
+
+New aes algorithm added (13.01.19)

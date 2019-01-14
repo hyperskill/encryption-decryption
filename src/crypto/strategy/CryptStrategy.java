@@ -1,4 +1,4 @@
-package crypto;
+package crypto.strategy;
 
 public interface CryptStrategy {
     String encrypt(String input);

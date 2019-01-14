@@ -1,5 +1,8 @@
 package crypto;
 
+import crypto.strategy.CaesarCryptStrategy;
+import crypto.strategy.CryptStrategy;
+
 public enum CypherTypes {
     CAESAR {
         @Override

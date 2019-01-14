@@ -1,4 +1,4 @@
-package crypto;
+package crypto.strategy;
 
 public class CryptContext {
 

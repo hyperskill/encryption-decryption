@@ -1,24 +1,33 @@
 package crypto;
 
-import java.io.BufferedReader;
+import crypto.strategy.CryptContext;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.Scanner;
 
 public class Crypto {
 
-    public static void main(String[] args) {
-        String mode = "enc";
-        String data = "";
-        int key = 0;
-        String result;
-        String inputFile = "";
-        String outputFile = "";
-        String algorithm = "";
+    private String mode = "enc";
+    private String data = "";
+    private int key;
+    private String result;
+    private String outputFile = "";
+    private String algorithm;
+    private String inputFile = "";
 
+    public Crypto(String mode, String data, int key, String outputFile, String algorithm) {
+        this.mode = mode;
+        this.data = data;
+        this.key = key;
+        this.outputFile = outputFile;
+        this.algorithm = algorithm;
+    }
+
+    public Crypto() {
+
+    }
+
+    public void invoke(String[] args) {
         for (int i = 0; i < args.length; i++) {
             switch (args[i]) {
                 case "-mode":
@@ -41,33 +50,30 @@ public class Crypto {
                     break;
             }
         }
+    }
 
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in))) {
-            if (key == 0) {
-                key = Integer.valueOf(br.readLine());
-            }
-            if (!inputFile.isEmpty() && !data.isEmpty()) {
-                data = br.readLine();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void start() {
+        fillParams();
 
         if (!inputFile.isEmpty()) {
-            File file = new File(
-                    "/mnt/hgfs/share_vm/IdeaProjects/encryption-decryption/src/crypto/"
-                            + inputFile);
-            StringBuilder sb = new StringBuilder();
-            try (Scanner scanner = new Scanner(file)) {
-                while (scanner.hasNextLine()) {
-                    sb.append(scanner.nextLine());
-                }
-            } catch (FileNotFoundException e) {
-                System.out.println("File not found!");
-            }
-            data = sb.toString();
+            data = CryptoUtility.readFromFile(inputFile);
         }
 
+        process();
+
+        makeResult();
+    }
+
+    private void fillParams() {
+        if (key == 0) {
+            key = Integer.valueOf(CryptoUtility.getUserInput("key"));
+        }
+        if (inputFile.isEmpty() && data.isEmpty()) {
+            data = CryptoUtility.getUserInput("message for encryption");
+        }
+    }
+
+    private void process() {
         CryptContext cryptContext = new CryptContext(
                 CypherTypes.valueOf(algorithm.toUpperCase()).createCryptStrategy(key));
         switch (mode) {
@@ -80,15 +86,11 @@ public class Crypto {
             default:
                 result = "Unknown operation!";
         }
-
-        writeResult(outputFile, result);
     }
 
-    private static void writeResult(String outputFile, String result) {
+    private void makeResult() {
         if (!outputFile.isEmpty()) {
-            File file = new File(
-                    "/mnt/hgfs/share_vm/IdeaProjects/encryption-decryption/src/crypto/"
-                            + outputFile);
+            File file = new File("crypto/" + outputFile);
             try (FileWriter fileWriter = new FileWriter(file)) {
                 fileWriter.write(result);
             } catch (IOException e) {

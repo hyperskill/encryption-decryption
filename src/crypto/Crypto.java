@@ -16,6 +16,7 @@ public class Crypto {
             if (args[0].equals("-mode")) {
                 operation = args[1];
             }
+
             if (args[2].equals("-key")) {
                 key = Integer.parseInt(args[3]);
             }

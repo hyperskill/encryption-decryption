@@ -15,12 +15,13 @@ public class Crypto {
 
         String outputString;
 
-        if (ENCRYPTION.equals(operation)) {
-            outputString = encrypt(message, key);
-        } else if (DECRYPTION.equals(operation)) {
-            outputString = decrypt(message, key);
-        } else {
-            throw new UnsupportedOperationException("Operation '" + operation + "' is not supported.");
+        switch (operation) {
+            case ENCRYPTION: outputString = encrypt(message, key);
+                break;
+            case DECRYPTION: outputString = decrypt(message, key);
+                break;
+            default:
+                throw new UnsupportedOperationException("Operation '" + operation + "' is not supported.");
         }
 
         System.out.println(outputString);

@@ -15,40 +15,21 @@ public class Crypto {
 
     public static void main(String[] args) {
 
-        Map<String, String> params = parseArgs(args);
+        final Map<String, String> params = parseArgs(args);
+        prepareParams(params);
 
-        String operation;
-        if (params.get(MODE_KEY) == null) {
-            operation = ENCRYPTION;
-        } else {
-            operation = params.get(MODE_KEY);
-        }
-
-        int key;
-        if (params.get(CRYPTO_KEY) == null) {
-            System.out.println("Enter key:");
-            key = Integer.parseInt(SCANNER.nextLine());
-        } else {
-            key = Integer.parseInt(params.get(CRYPTO_KEY));
-        }
-
-        String data;
-        if (params.get(DATA_KEY) == null) {
-            System.out.println("Enter data string:");
-            data = SCANNER.nextLine();
-        } else {
-            data = params.get(DATA_KEY);
-        }
-
+        String mode = params.get(MODE_KEY);
+        String data = params.get(DATA_KEY);
+        int key = Integer.parseInt(params.get(CRYPTO_KEY));
         String outputString;
 
-        switch (operation) {
+        switch (mode) {
             case ENCRYPTION: outputString = encrypt(data, key);
                 break;
             case DECRYPTION: outputString = decrypt(data, key);
                 break;
             default:
-                throw new UnsupportedOperationException("Operation '" + operation + "' is not supported.");
+                throw new UnsupportedOperationException("Operation '" + mode + "' is not supported.");
         }
 
         System.out.println(outputString);
@@ -78,6 +59,20 @@ public class Crypto {
         }
 
         return params;
+    }
+
+    public static void prepareParams (Map<String, String> params) {
+        params.putIfAbsent(MODE_KEY, ENCRYPTION);
+
+        if (params.get(CRYPTO_KEY) == null) {
+            System.out.println("Enter key:");
+            params.put(CRYPTO_KEY, SCANNER.nextLine());
+        }
+
+        if (params.get(DATA_KEY) == null) {
+            System.out.println("Enter data string:");
+            params.put(DATA_KEY, SCANNER.nextLine());
+        }
     }
 
     public static String encrypt(String message, int key) {

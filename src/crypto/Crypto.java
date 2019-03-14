@@ -98,7 +98,7 @@ public class Crypto4 {
             }
 
     }
-    public static void encrypt(String text, int key, String inFile, String outFile) {
+    //public static void encrypt(String text, int key, String inFile, String outFile) {
         char[] charText = text.toCharArray();
         for (int i = 0; i < charText.length; i++) {
             char tmp = (char) (charText[i]+key);

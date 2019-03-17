@@ -8,20 +8,27 @@ import java.util.HashMap;
 import java.util.Scanner;
 
 public class Crypto {
-    public static String encrypt(String text, int key) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < text.length(); i++) {
-            sb.append((char) (text.charAt(i) ^ key));
-        }
-        return sb.toString();
+    interface  Strategy {
+        String encrypt(String text, int key);
+        String decrypt(String text, int key);
     }
-
-    public static String decrypt(String text, int key) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < text.length(); i++) {
-            sb.append((char) (text.charAt(i) ^ key));
+    public class Xor implements Strategy{
+        @Override
+        public String encrypt(String text, int key) {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < text.length(); i++) {
+                sb.append((char) (text.charAt(i) ^ key));
+            }
+            return sb.toString();
         }
-        return sb.toString();
+        @Override
+        public String decrypt(String text, int key) {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < text.length(); i++) {
+                sb.append((char) (text.charAt(i) ^ key));
+            }
+            return sb.toString();
+        }
     }
 
     public static void main(String[] args) {
@@ -34,7 +41,12 @@ public class Crypto {
         int key = Integer.parseInt(params.get("-key"));
         String inputFileName = params.get("-in");
         String outputFileName = params.get("-out");
-        if (null == operation) {
+        String algorithm = params.get("-alg");
+        Strategy strategy;
+        //if (algorithm.isEmpty()) {
+            strategy = new Crypto().new Xor();
+        //}
+        if (operation.isEmpty()) {
             operation = "enc";
         }
         if (!text.isEmpty() && !inputFileName.isEmpty()) {
@@ -47,10 +59,10 @@ public class Crypto {
             String result = "";
             switch (operation) {
                 case "enc":
-                    result = encrypt(text, key);
+                    result = strategy.encrypt(text, key);
                     break;
                 case "dec":
-                    result = decrypt(text, key);
+                    result = strategy.decrypt(text, key);
                     break;
             }
             if (outputFileName.isEmpty()) {
@@ -70,10 +82,10 @@ public class Crypto {
                     String result = "";
                     switch (operation) {
                         case "enc":
-                            result = encrypt(scanner.nextLine(), key);
+                            result = strategy.decrypt(scanner.nextLine(), key);
                             break;
                         case "dec":
-                            result = decrypt(scanner.nextLine(), key);
+                            result = strategy.decrypt(scanner.nextLine(), key);
                             break;
                     }
                     if (outputFileName.isEmpty()) {

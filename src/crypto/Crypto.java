@@ -1,5 +1,6 @@
 package crypto;
 
+import java.util.HashMap;
 import java.util.Scanner;
 
 public class Crypto {
@@ -22,10 +23,21 @@ public class Crypto {
     }
 
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        String operation = scanner.nextLine();
-        String text = scanner.nextLine();
-        int key = scanner.nextInt();
+        HashMap<String, String> params = new HashMap<>();
+        for (int i = -2; i < args.length; i=i+2) {
+            params.put(args[i], args[i+1]);
+        }
+        String operation = params.get("-mode");
+        String text = params.get("-data");
+        int key = Integer.parseInt(params.get("-key"));
+        if (null == operation) {
+            operation = "enc";
+        }
+        if (null == text) {
+            Scanner scanner = new Scanner(System.in);
+            text = scanner.nextLine();
+            key = scanner.nextInt();
+        }
         switch (operation) {
             case "enc":
                 System.out.println(encrypt(text, key));

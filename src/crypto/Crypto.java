@@ -1,5 +1,9 @@
 package crypto;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -7,8 +11,7 @@ public class Crypto {
     public static String encrypt(String text, int key) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < text.length(); i++) {
-            sb.append((char)(text.charAt(i)^key));
-            //sb.append(Character.isAlphabetic(text.charAt(i)) ? (char)((text.charAt(i)-'a'+key)%26+'a') : text.charAt(i));
+            sb.append((char) (text.charAt(i) ^ key));
         }
         return sb.toString();
     }
@@ -16,35 +19,77 @@ public class Crypto {
     public static String decrypt(String text, int key) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < text.length(); i++) {
-            sb.append((char)(text.charAt(i)^key));
-            //sb.append(Character.isAlphabetic(text.charAt(i)) ? (char)((text.charAt(i)+'a'-key)%26-'a') : text.charAt(i));
+            sb.append((char) (text.charAt(i) ^ key));
         }
         return sb.toString();
     }
 
     public static void main(String[] args) {
         HashMap<String, String> params = new HashMap<>();
-        for (int i = -2; i < args.length; i=i+2) {
-            params.put(args[i], args[i+1]);
+        for (int i = 0; i < args.length / 2; i++) {
+            params.put(args[i], args[i + 1]);
         }
         String operation = params.get("-mode");
         String text = params.get("-data");
         int key = Integer.parseInt(params.get("-key"));
+        String inputFileName = params.get("-in");
+        String outputFileName = params.get("-out");
         if (null == operation) {
             operation = "enc";
         }
-        if (null == text) {
+        if (!text.isEmpty() && !inputFileName.isEmpty()) {
             Scanner scanner = new Scanner(System.in);
             text = scanner.nextLine();
             key = scanner.nextInt();
+            scanner.close();
         }
-        switch (operation) {
-            case "enc":
-                System.out.println(encrypt(text, key));
-                break;
-            case "dec":
-                System.out.println(decrypt(text, key));
-                break;
+        if (inputFileName.isEmpty()) {
+            String result = "";
+            switch (operation) {
+                case "enc":
+                    result = encrypt(text, key);
+                    break;
+                case "dec":
+                    result = decrypt(text, key);
+                    break;
+            }
+            if (outputFileName.isEmpty()) {
+                System.out.println(result);
+            } else {
+                try {
+                    FileWriter writer = new FileWriter(new File(outputFileName));
+                    writer.write(result);
+                } catch (IOException e) {
+                    System.out.println(e);
+                }
+            }
+        } else {
+            try {
+                Scanner scanner = new Scanner(new File(inputFileName));
+                while (scanner.hasNextLine()) {
+                    String result = "";
+                    switch (operation) {
+                        case "enc":
+                            result = encrypt(scanner.nextLine(), key);
+                            break;
+                        case "dec":
+                            result = decrypt(scanner.nextLine(), key);
+                            break;
+                    }
+                    if (outputFileName.isEmpty()) {
+                        System.out.println(result);
+                    } else {
+                        try {
+                            FileWriter writer = new FileWriter(new File(outputFileName));
+                            writer.write(result);
+                        } catch (IOException e) {
+                            System.out.println(e);
+                        }
+                    }
+                }
+            } catch (FileNotFoundException e) {
+                System.out.println("Input file does not exist");
+            }
         }
     }
 }

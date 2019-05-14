@@ -1,10 +1,17 @@
-package crypto;
+package encryptdecrypt;
 
-import java.util.Scanner;
+class Crypto {
+    private Cipher cipher;
 
-public class Crypto {
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-	// write your code here
+    void setCipher(Cipher cipher) {
+        this.cipher = cipher;
+    }
+
+    void doMagic(DataProcess dataProcess) {
+        if (dataProcess.getOperation().equals("enc")) {
+            this.cipher.encrypt(dataProcess);
+        } else {
+            this.cipher.decrypt(dataProcess);
+        }
     }
 }
